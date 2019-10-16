@@ -4,7 +4,7 @@
 #include <cstdlib>      // atoi
 #include <iostream>     // cout
 #include <string>       // string class
-#include <vector>       // vector clas
+#include <vector>       // vector class
 
 // GLOGBAL
 int MAX_CHILD = 12;
@@ -14,18 +14,21 @@ sem_t CHILD_READ;
 
 void* father(void* args) {
     int cycle = *(int*)args;
-    std::string task = "has read a book and is tucked in bed";
+    std::vector<std::string> tasks{"is being read a book", "is tucked in bed"};
 
     for(int day = 0; day < cycle; ++day) {
         sem_wait(&FATHER_WAKE);
 
         std::cout << "Father is home to help mother" << std::endl;
 
-        for(int i = 0; i < MAX_CHILD; ++i) {
-            sem_wait(&CHILD_READ);
+        for(int i = 0; i < tasks.size(); ++i) {
+            for(int j = 0; j < MAX_CHILD; ++j) {
+                // @task reading a book, wait for child to be ready
+                if(i == 0) sem_wait(&CHILD_READ);
 
-            std::cout << "\tFather: child #" << i + 1 << " " << task
-                      << std::endl;
+                std::cout << "\tFather: child #" << j + 1 << " " << tasks[i]
+                          << std::endl;
+            }
         }
 
         std::cout << "Father is going to sleep\n\n" << std::endl;
