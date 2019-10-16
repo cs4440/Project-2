@@ -19,19 +19,19 @@ all: $(ALL)
 #	rm *.o
 
 ProCon: ProCon.o
-	$(CXX) -o $@ $^
+	$(CXX) -o $@ $^ $(LDFLAGS)
 
 ProCon.o: $(PROC)/ProCon.cpp
 	$(CXX) $(CXXFLAGS) -c $<
 
 MH: MH.o
-	$(CXX) -o $@ $^
+	$(CXX) -o $@ $^ $(LDFLAGS)
 
 MH.o: $(PROC)/MH.cpp
 	$(CXX) $(CXXFLAGS) -c $<
 
 Airline: Airline.o
-	$(CXX) -o $@ $^
+	$(CXX) -o $@ $^ $(LDFLAGS)
 
 Airline.o: $(PROC)/Airline.cpp
 	$(CXX) $(CXXFLAGS) -c $<
