@@ -4,15 +4,17 @@
 
 // GLOBAL
 const int BUF_SZ = 5;
-int IN = 0, OUT = 0;
-bool STOP = false;
-sem_t PRODUCE, CONSUME, CONTROLLER;
+bool STOP = false;    // flag to stop threads
+int IN = 0, OUT = 0;  // buffer index
+sem_t PRODUCE,        // signal need to produce
+    CONSUME,          // signal need to consume
+    CONTROLLER;       // signal controller to count
 
 void *consumer(void *args) {
     char chr, *buf = (char *)args;
 
     while(true) {
-        sem_wait(&CONSUME);
+        sem_wait(&CONSUME);  // waiting to consume
 
         if(STOP) break;
 
@@ -22,7 +24,7 @@ void *consumer(void *args) {
         ++OUT %= BUF_SZ;
         sem_post(&CONTROLLER);
 
-        sem_post(&PRODUCE);
+        sem_post(&PRODUCE);  // signal to produce
     }
     pthread_exit(0);
 }
@@ -31,16 +33,15 @@ void *producer(void *args) {
     char chr = 33, *buf = (char *)args;
 
     while(true) {
-        sem_wait(&PRODUCE);
+        sem_wait(&PRODUCE);  // waiting to produce
 
         if(STOP) break;
         if(chr > 126) chr = 33;  // reset ascii character
 
         buf[IN] = chr++;
-        // std::cout << "proudcing " << buf[IN] << std::endl;
         ++IN %= BUF_SZ;
 
-        sem_post(&CONSUME);
+        sem_post(&CONSUME);  // signal to consume
     }
     pthread_exit(0);
 }
