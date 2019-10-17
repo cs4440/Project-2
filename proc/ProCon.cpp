@@ -4,11 +4,12 @@
 
 // GLOBAL
 const int BUF_SZ = 5;
-bool STOP = false;    // flag to stop threads
-int IN = 0, OUT = 0;  // buffer index
-sem_t PRODUCE,        // signal need to produce
-    CONSUME,          // signal need to consume
-    CONTROLLER;       // signal controller to count
+bool STOP = false;           // flag to stop threads
+int COUNT = 0;               // buffer index
+pthread_mutex_t COUNT_LOCK;  // lock the count
+sem_t PRODUCE,               // signal need to produce
+    CONSUME,                 // signal need to consume
+    CONTROLLER;              // signal controller to count
 
 void *consumer(void *args) {
     char chr, *buf = (char *)args;
@@ -18,10 +19,13 @@ void *consumer(void *args) {
 
         if(STOP) break;
 
-        chr = buf[OUT];
-        std::cout << chr << std::endl;
+        pthread_mutex_lock(&COUNT_LOCK);
+        // std::cout << "consumer count before" << COUNT << std::endl;
+        chr = buf[--COUNT];
+        std::cout << "Consuming [" << COUNT << "]: " << chr << std::endl;
+        COUNT %= (BUF_SZ + 1);
+        pthread_mutex_unlock(&COUNT_LOCK);
 
-        ++OUT %= BUF_SZ;
         sem_post(&CONTROLLER);
 
         sem_post(&PRODUCE);  // signal to produce
@@ -38,8 +42,12 @@ void *producer(void *args) {
         if(STOP) break;
         if(chr > 126) chr = 33;  // reset ascii character
 
-        buf[IN] = chr++;
-        ++IN %= BUF_SZ;
+        pthread_mutex_lock(&COUNT_LOCK);
+        buf[COUNT++] = chr++;
+        std::cout << "Producing [" << COUNT - 1 << "]: " << char(chr - 1)
+                  << std::endl;
+        COUNT %= (BUF_SZ + 1);
+        pthread_mutex_unlock(&COUNT_LOCK);
 
         sem_post(&CONSUME);  // signal to consume
     }
@@ -87,8 +95,7 @@ int main() {
     sem_init(&CONSUME, 0, BUF_SZ);  // init full buffer of BUF_SZ
     sem_init(&PRODUCE, 0, 0);       // producer can't produce
     STOP = false;
-    OUT = 0;
-    IN = 0;
+    COUNT = BUF_SZ;
 
     pthread_create(&tid[0], NULL, controller, &count_limit);
     pthread_create(&tid[1], NULL, consumer, buf);
@@ -107,8 +114,7 @@ int main() {
     sem_init(&CONSUME, 0, 2);  // init buffer has 2 characters
     sem_init(&PRODUCE, 0, 3);  // producer need to produce 3 characters
     STOP = false;
-    OUT = 0;
-    IN = 2;
+    COUNT = 2;
 
     pthread_create(&tid[0], NULL, controller, &count_limit);
     pthread_create(&tid[1], NULL, consumer, buf);
