@@ -1,7 +1,7 @@
 #include <pthread.h>    // posix threads functions
 #include <semaphore.h>  // sempahore functions
-#include <unistd.h>     // usleep
-#include <cstdlib>      // atoi
+#include <unistd.h>     // usleep()
+#include <cstdlib>      // atoi()
 #include <iostream>     // cout
 #include <string>       // string class
 #include <vector>       // vector class
@@ -21,7 +21,7 @@ void* father(void* args) {
 
         std::cout << "Father is home to help mother" << std::endl;
 
-        for(int i = 0; i < tasks.size(); ++i) {
+        for(std::size_t i = 0; i < tasks.size(); ++i) {
             for(int j = 0; j < MAX_CHILD; ++j) {
                 // @task reading a book, wait for child to be ready
                 if(i == 0) sem_wait(&CHILD_READ);
