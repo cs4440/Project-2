@@ -1,3 +1,9 @@
+/*
+ * Simulate an airline with passenger threads, baggage handler threads,
+ * security screen threadds, and flight attendant threads. Each passenger
+ * threads will need to pass through baggage handler, security screener,
+ * and flight attendant before it can be seaed in he airplane.
+ */
 #include <pthread.h>    // posix thread
 #include <semaphore.h>  // semaphore functions
 #include <unistd.h>     // usleep()

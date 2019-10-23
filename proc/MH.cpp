@@ -1,3 +1,9 @@
+/*
+ * Simulate an mother and father program, where the mother will perform tasks
+ * for each children and the father will perofrm the last two tasks. THe mother
+ * will sleep once her tasks are done and the father will sleep and also wake
+ * up the mother to continue the next day.
+ */
 #include <pthread.h>    // posix threads functions
 #include <semaphore.h>  // sempahore functions
 #include <unistd.h>     // usleep()

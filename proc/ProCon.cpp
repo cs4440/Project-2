@@ -1,3 +1,8 @@
+/*
+ * Simulate a producer and consumer concurrency program. Produce and consumer
+ * will be spawned to work on buffer. The consumer will cosume and trail behind
+ * the data produced by the producer.
+ */
 #include <pthread.h>
 #include <semaphore.h>
 #include <iostream>
