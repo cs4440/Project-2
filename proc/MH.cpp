@@ -3,6 +3,21 @@
  * for each children and the father will perofrm the last two tasks. THe mother
  * will sleep once her tasks are done and the father will sleep and also wake
  * up the mother to continue the next day.
+ *
+ * DETAILS
+ * -------
+ * The mother thread will cycle through a number of days and within each day
+ * cycle the number of children to perform x number of tasks. Once the mother
+ * reaches the task to clean the child in a bath, the mother thread will signal
+ * FATHER_WAKE to wakeup the father thread. When the mother thread has
+ * completed the task to clean the child, she will signal CHILD_READ each time.
+ * Once all children tasks are complete, the mother thread will sleep by
+ * waiting for MOTHER_WAKE semaphore.
+ * The father thread will wait for FATHER_WAKE to prepare for reading a book to
+ * the child. For each child, the father wiil wait for CHILD_READ to read a
+ * book to the child. Once every children has completed the tasks, the father
+ * thread will signal MOTHER_WAKE to cotinue the next day and sleep by waiting
+ * for FATHER_WAKE.
  */
 #include <pthread.h>    // posix threads functions
 #include <semaphore.h>  // sempahore functions

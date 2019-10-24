@@ -2,6 +2,17 @@
  * Simulate a producer and consumer concurrency program. Produce and consumer
  * will be spawned to work on buffer. The consumer will cosume and trail behind
  * the data produced by the producer.
+ *
+ * DETAILS
+ * -------
+ * The producer will wait for a PRODUCE semaphore. Once PRODUCE is signaled,
+ * the producer will put a character in the buffer and increment IN count.
+ * The producer then signal CONSUME semeaphore to tell the consumer that it has
+ * a character to consume.
+ * The consume will wait for CONSUMER semaphore to consume a character. Once a
+ * character is consumed, increment the OUT count. Then, signal PRODUCE to the
+ * producer.
+ * The IN and OUT count will be mod by BUF_SZ to loop within the size.
  */
 #include <pthread.h>
 #include <semaphore.h>

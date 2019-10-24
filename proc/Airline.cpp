@@ -3,6 +3,21 @@
  * security screen threadds, and flight attendant threads. Each passenger
  * threads will need to pass through baggage handler, security screener,
  * and flight attendant before it can be seaed in he airplane.
+ *
+ * DETAILS
+ * -------
+ * baggage_handler, security_screener, and flight_attendant threads will
+ * wait for BAGGAGE, SEC_SCREENER and FLIGHT_ATTENDNT semaphores respectively.
+ * When wait passes, each of these threads will signal BAGGAGE_DONE,
+ * SEC_SCREENER_DONE, and FLIGHT_ATTENDANT_DONE semeaphores to the corresponding
+ * passenger thread.
+ * Each passenger threads will signal SEC_SCREENER and FLIGHT_ATTENDNT in order
+ * and wait for response for BAGGAGE_DONE, SEC_SCREENER_DONE, and
+ * FLIGHT_ATTENDANT_DONE. Once each of the semaphores pass, the passenger has
+ * been seated and signal SEATED to a controller thread.
+ * The controlle thread will count the number of SEATED signals and once every
+ * passengers has seated, the controller thread will resignal all the workers
+ * to stop and exit.
  */
 #include <pthread.h>    // posix thread
 #include <semaphore.h>  // semaphore functions

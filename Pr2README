@@ -5,6 +5,46 @@ proc/MH.cpp - Mother Hubbard program
 proc/Airline.cpp - Airline/passenger program
 
 
+Program design
+--------------
+Producer Consumer:
+ * The producer will wait for a PRODUCE semaphore. Once PRODUCE is signaled,
+ * the producer will put a character in the buffer and increment IN count.
+ * The producer then signal CONSUME semeaphore to tell the consumer that it has
+ * a character to consume.
+ * The consume will wait for CONSUMER semaphore to consume a character. Once a
+ * character is consumed, increment the OUT count. Then, signal PRODUCE to the
+ * producer.
+ * The IN and OUT count will be mod by BUF_SZ to loop within the size.
+
+Mother Hubbard:
+ * The mother thread will cycle through a number of days and within each day
+ * cycle the number of children to perform x number of tasks. Once the mother
+ * reaches the task to clean the child in a bath, the mother thread will signal
+ * FATHER_WAKE to wakeup the father thread. When the mother thread has
+ * completed the task to clean the child, she will signal CHILD_READ each time.
+ * Once all children tasks are complete, the mother thread will sleep by
+ * waiting for MOTHER_WAKE semaphore.
+ * The father thread will wait for FATHER_WAKE to prepare for reading a book to
+ * the child. For each child, the father wiil wait for CHILD_READ to read a
+ * book to the child. Once every children has completed the tasks, the father
+ * thread will signal MOTHER_WAKE to cotinue the next day and sleep by waiting
+ * for FATHER_WAKE.
+
+Airline:
+ * baggage_handler, security_screener, and flight_attendant threads will
+ * wait for BAGGAGE, SEC_SCREENER and FLIGHT_ATTENDNT semaphores respectively.
+ * When wait passes, each of these threads will signal BAGGAGE_DONE,
+ * SEC_SCREENER_DONE, and FLIGHT_ATTENDANT_DONE semeaphores to the corresponding
+ * passenger thread.
+ * Each passenger threads will signal SEC_SCREENER and FLIGHT_ATTENDNT in order
+ * and wait for response for BAGGAGE_DONE, SEC_SCREENER_DONE, and
+ * FLIGHT_ATTENDANT_DONE. Once each of the semaphores pass, the passenger has
+ * been seated and signal SEATED to a controller thread.
+ * The controlle thread will count the number of SEATED signals and once every
+ * passengers has seated, the controller thread will resignal all the workers
+ * to stop and exit.
+
 ProCon.cpp output
 -----------------
 Simulating buffer empty
