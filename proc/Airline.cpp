@@ -159,6 +159,13 @@ int main(int argc, char *argv[]) {
     for(int i = 1; i < argc && i <= (int)args.size(); ++i)
         *args[i - 1] = atoi(argv[i]);
 
+    if(PASS_NUM == 0 || BH_NUM == 0 || SS_NUM == 0 || FA_NUM == 0) {
+        std::cerr << "Invalid passenger, baggage handler, security screen or "
+                     "flight attendants count"
+                  << std::endl;
+        return 1;
+    }
+
     // allocate threads
     bhandlers = new pthread_t[BH_NUM];
     sec_screeners = new pthread_t[SS_NUM];

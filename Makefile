@@ -1,6 +1,6 @@
 CXX             := g++
 DEBUG_LEVEL     := -g
-EXTRA_CCFLAGS   := -Wall -Werror=return-type -Wextra -pedantic
+EXTRA_CCFLAGS   := -Wall -Werror=return-type -Wextra -pedantic -Wno-unused-parameter
 CXXFLAGS        := $(DEBUG_LEVEL) $(EXTRA_CCFLAGS)
 LDFLAGS         := -lm -lstdc++ -pthread
 
@@ -16,7 +16,7 @@ ALL             := ProCon MH Airline
 # $^ all prerequisites
 
 all: $(ALL)
-#	rm *.o
+	rm *.o
 
 ProCon: ProCon.o
 	$(CXX) -o $@ $^ $(LDFLAGS)

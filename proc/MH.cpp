@@ -7,7 +7,7 @@
  * DETAILS
  * -------
  * The mother thread will cycle through a number of days and within each day
- * cycle the number of children to perform x number of tasks. Once the mother
+ * days the number of children to perform x number of tasks. Once the mother
  * reaches the task to clean the child in a bath, the mother thread will signal
  * FATHER_WAKE to wakeup the father thread. When the mother thread has
  * completed the task to clean the child, she will signal CHILD_READ each time.
@@ -34,10 +34,10 @@ sem_t MOTHER_WAKE;
 sem_t CHILD_READ;
 
 void* father(void* args) {
-    int cycle = *(int*)args;
+    int days = *(int*)args;
     std::vector<std::string> tasks{"is being read a book", "is tucked in bed"};
 
-    for(int day = 0; day < cycle; ++day) {
+    for(int day = 0; day < days; ++day) {
         sem_wait(&FATHER_WAKE);
 
         std::cout << "Father is home to help mother" << std::endl;
@@ -61,12 +61,12 @@ void* father(void* args) {
 }
 
 void* mother(void* args) {
-    int cycle = *(int*)args;
+    int days = *(int*)args;
     std::vector<std::string> tasks{"is waking up", "is fed breakfast",
                                    "is sent to school", "has eaten dinner",
                                    "has taken a bath"};
 
-    for(int day = 0; day < cycle; ++day) {
+    for(int day = 0; day < days; ++day) {
         std::string day_msg = "This is day #" + std::to_string(day + 1) +
                               " in the life of Mother Hubbard";
 
@@ -99,9 +99,13 @@ void* mother(void* args) {
 }
 
 int main(int argc, char* argv[]) {
-    int cycle = 5;
+    int days = 5;
 
-    if(argc > 1) cycle = atoi(argv[1]);
+    if(argc > 1) days = atoi(argv[1]);
+    if(days < 1) {
+        std::cerr << "Invalid days count" << std::endl;
+        return 1;
+    }
 
     pthread_t tid[2];
 
@@ -109,8 +113,8 @@ int main(int argc, char* argv[]) {
     sem_init(&MOTHER_WAKE, 0, 1);
     sem_init(&CHILD_READ, 0, 0);
 
-    pthread_create(&tid[0], NULL, father, &cycle);
-    pthread_create(&tid[1], NULL, mother, &cycle);
+    pthread_create(&tid[0], NULL, father, &days);
+    pthread_create(&tid[1], NULL, mother, &days);
 
     pthread_join(tid[0], NULL);
     pthread_join(tid[1], NULL);
