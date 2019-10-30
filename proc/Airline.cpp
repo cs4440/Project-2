@@ -174,6 +174,7 @@ int main(int argc, char *argv[]) {
 
     // init mutex and semaphore
     pthread_mutex_init(&PRINT_LOCK, NULL);
+    sem_init(&SEATED, 0, 0);
     sem_init(&BAGGAGE, 0, 0);
     sem_init(&BAGGAGE_DONE, 0, 0);
     sem_init(&SEC_SCREENER, 0, 0);
